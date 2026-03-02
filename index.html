@@ -432,13 +432,13 @@ async function getObservations() {
     body: JSON.stringify({
       filter: { type:'and', clauses:[{ type:'or', predicates: ids.map(id => ({ type:'dimension', dimension:'queueId', value:id })) }] },
       groupBy: ['queueId'],
-      metrics: ['oWaiting','oInteracting','oAlerting','oLongestWaiting','oOnQueue'],
+      metrics: ['oWaiting','oInteracting','oAlerting','oLongestWaiting'],
     }),
   });
   const map = {};
   for (const row of (data.results || [])) {
     const qId = row.group?.queueId; if (!qId) continue;
-    if (!map[qId]) map[qId] = { waiting:0, interacting:0, alerting:0, longestWaitSec:0, onQueue:0 };
+    if (!map[qId]) map[qId] = { waiting:0, interacting:0, alerting:0, longestWaitSec:0 };
     for (const d of (row.data || [])) {
       if (d.metric === 'oLongestWaiting') {
         const startMs = d.stats?.calculatedMetricValue ?? 0;
@@ -448,7 +448,6 @@ async function getObservations() {
       if (d.metric === 'oWaiting')     map[qId].waiting     += d.stats?.count ?? 0;
       if (d.metric === 'oInteracting') map[qId].interacting += d.stats?.count ?? 0;
       if (d.metric === 'oAlerting')    map[qId].alerting    += d.stats?.count ?? 0;
-      if (d.metric === 'oOnQueue')     map[qId].onQueue     += d.stats?.count ?? 0;
     }
   }
   return map;
@@ -457,8 +456,12 @@ async function getObservations() {
 // ── AGENTS ──
 async function getAgents(queueId) {
   try {
-    const d = await api(`/api/v2/routing/queues/${queueId}/users?pageSize=50&pageNumber=1&joined=true&sortBy=name&sortOrder=asc&expand=presence`);
-    return (d.entities || []).length;
+    const d = await api(`/api/v2/routing/queues/${queueId}/users?pageSize=100&pageNumber=1&joined=true&expand=routingStatus`);
+    // Only count agents whose routingStatus is ON_QUEUE (actively available or interacting on this queue)
+    return (d.entities || []).filter(u => {
+      const rs = u.routingStatus?.status;
+      return rs === 'ON_QUEUE' || rs === 'INTERACTING';
+    }).length;
   } catch { return null; }
 }
 
@@ -466,9 +469,8 @@ async function getAgents(queueId) {
 async function poll() {
   try {
     const obs = await getObservations();
-    // Use oOnQueue from observations — counts agents actively on queue
     const agentMap = {};
-    CONFIG.QUEUES.forEach(q => { agentMap[q.id] = (obs[q.id] || {}).onQueue || 0; });
+    await Promise.all(CONFIG.QUEUES.map(async q => { agentMap[q.id] = await getAgents(q.id); }));
     render(obs, agentMap);
     checkAlertCondition(obs, agentMap);
     setBadge('live', 'LIVE');
