@@ -457,8 +457,8 @@ async function getObservations() {
 async function getAgents(queueId) {
   try {
     // /members returns agents with their on-queue status for this specific queue
-    const d = await api(`/api/v2/routing/queues/${queueId}/members?pageSize=100&expand=presence`);
-    return (d.entities || []).filter(u => u.onQueue === true).length;
+    const d = await api(`/api/v2/routing/queues/${queueId}/members?pageSize=100&expand=routingStatus`);
+    return (d.entities || []).filter(u => u.routingStatus?.status === 'ON_QUEUE').length;
   } catch { return null; }
 }
 
