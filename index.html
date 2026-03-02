@@ -456,9 +456,11 @@ async function getObservations() {
 // ── AGENTS ──
 async function getAgents(queueId) {
   try {
-    // /members returns agents with their on-queue status for this specific queue
+    // IDLE = on queue waiting, INTERACTING = on queue handling interaction
     const d = await api(`/api/v2/routing/queues/${queueId}/members?pageSize=100&expand=routingStatus`);
-    return (d.entities || []).filter(u => u.routingStatus?.status === 'ON_QUEUE').length;
+    return (d.entities || []).filter(u =>
+      u.routingStatus?.status === 'IDLE' || u.routingStatus?.status === 'INTERACTING'
+    ).length;
   } catch { return null; }
 }
 
