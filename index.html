@@ -96,8 +96,8 @@
     /* ── MAIN GRID: pods left, voice panels right ── */
     .main-grid {
       display: grid;
-      grid-template-columns: 1fr calc((100% - clamp(0.6rem,1.2vw,1.1rem)) / 4 - clamp(64px,8vw,110px) / 3);
-      gap: clamp(0.6rem,1.2vw,1.1rem);
+      grid-template-columns: 1fr calc((100% - clamp(0.6rem,1.2vw,1.1rem)) / 3.2 - clamp(64px,8vw,110px) / 3);
+      gap: clamp(1.5rem,3vw,3rem);
       align-items: stretch;
     }
 
@@ -322,7 +322,7 @@ function allQueues() {
       <div class="brand-icon"><img id="header-logo" src="" alt="SWH"/></div>
       <div>
         <div class="brand-name">Care Team Dashboard</div>
-        <div class="brand-sub">Live Queue Dashboard &mdash; All PODs</div>
+        <div class="brand-sub">Real-Time Dashboard for All Care Team Queues</div>
       </div>
     </div>
     <div class="header-line"></div>
