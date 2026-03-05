@@ -154,13 +154,18 @@
     /* ── STATS ── */
     .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: end; }
     .stat  { padding: clamp(0.5rem,1.2vw,1.15rem) clamp(0.3rem,0.6vw,0.6rem) clamp(0.4rem,0.8vw,0.8rem); display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: flex-end; }
-    .stat-label { font-family: var(--font-h); font-size: clamp(0.44rem,0.8vw,0.62rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #7aafd4; margin-bottom: clamp(0.2rem,0.4vw,0.35rem); height: 2.4em; display:block; text-align:center; line-height:1.2; }
+    .stat-label { font-family: var(--font-h); font-size: clamp(0.44rem,0.8vw,0.62rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #c8dff5; margin-bottom: clamp(0.2rem,0.4vw,0.35rem); height: 2.4em; display:block; text-align:center; line-height:1.2; }
     .stat-val   { font-family: var(--font-h); font-size: clamp(1.8rem,3.5vw,2.8rem); font-weight: 700; line-height: 1; letter-spacing: -0.01em; transition: color 0.5s; }
-    .stat-unit  { font-size: clamp(0.4rem,0.68vw,0.6rem); color: #7aafd4; margin-top: 0.2rem; letter-spacing: 0.06em; }
+    .stat-unit  { font-size: clamp(0.4rem,0.68vw,0.6rem); color: #c8dff5; margin-top: 0.2rem; letter-spacing: 0.06em; }
     @keyframes numflash { 0%{opacity:0.3;transform:scale(0.94)} 100%{opacity:1;transform:scale(1)} }
     .stat-val.flash { animation: numflash 0.35s cubic-bezier(0.16,1,0.3,1); }
     @keyframes agentpulse { 0%,100%{opacity:1;text-shadow:0 0 0px rgba(255,68,68,0)} 50%{opacity:0.5;text-shadow:0 0 22px rgba(255,68,68,0.9)} }
     .c-agent-zero { color: #ff4444; animation: agentpulse 3.5s ease-in-out infinite; }
+    @keyframes podAlertPulse {
+      0%,100% { opacity:1; text-shadow: 0 0 8px currentColor, 0 0 20px currentColor; }
+      50%     { opacity:0.35; text-shadow: 0 0 2px currentColor; }
+    }
+    .pod-label-text.alerting { animation: podAlertPulse 1.6s ease-in-out infinite; color: #ff4444 !important; text-shadow: 0 0 12px rgba(255,68,68,0.9); }
 
     /* ── CARD FOOT ── */
     .card-foot { display: flex; align-items: center; padding: clamp(0.3rem,0.6vw,0.6rem) clamp(0.5rem,1vw,1.1rem) clamp(0.35rem,0.6vw,0.6rem); font-size: clamp(0.38rem,0.68vw,0.55rem); color: var(--muted); }
@@ -346,11 +351,25 @@ function stopAlertFlash() {
   if(!faviconTimer) return; clearInterval(faviconTimer); faviconTimer=null; faviconFlipState=false; setFavicon(LOGO_SRC);
 }
 function checkAlertCondition(obs, agents) {
-  const alert = allQueues().some(q => {
+  // Global favicon flash — any queue has waiting + no agents
+  const anyAlert = allQueues().some(q => {
     const w=(obs[q.id]||{}).waiting||0, ag=agents[q.id]??null;
     return w>0 && (ag===0||ag===null);
   });
-  alert ? startAlertFlash() : stopAlertFlash();
+  anyAlert ? startAlertFlash() : stopAlertFlash();
+
+  // Per-POD label pulse — only if that POD has at least one queue with waiting + no agents
+  CONFIG.PODS.forEach(pod => {
+    const podAlert = pod.queues.some(q => {
+      const w=(obs[q.id]||{}).waiting||0, ag=agents[q.id]??null;
+      return w>0 && (ag===0||ag===null);
+    });
+    const labelEl = document.querySelector(`#pod-row-${pod.id} .pod-label-text`);
+    if(labelEl) {
+      if(podAlert) labelEl.classList.add('alerting');
+      else         labelEl.classList.remove('alerting');
+    }
+  });
 }
 
 // ── OAUTH ──
