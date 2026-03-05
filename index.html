@@ -416,10 +416,10 @@ async function getAgents(queueId) {
 
 // ── HELPERS ──
 function fmtTime(sec) {
-  if(!sec) return {v:'0',u:'sec'};
-  if(sec<60) return {v:String(sec),u:'sec'};
-  const m=Math.floor(sec/60),s=sec%60;
-  return {v:`${m}:${String(s).padStart(2,'0')}`,u:'min'};
+  if(!sec) return {v:'0:00',u:'h:mm'};
+  const h=Math.floor(sec/3600);
+  const m=Math.floor((sec%3600)/60);
+  return {v:`${h}:${String(m).padStart(2,'0')}`,u:'h:mm'};
 }
 function health(waiting,ag) {
   if(ag===0||ag===null) return {show:true,cls:'no-agents',label:'NO AGENTS'};
