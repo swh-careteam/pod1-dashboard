@@ -125,10 +125,10 @@
       text-align: center; line-height: 1.2; white-space: nowrap;
     }
     @keyframes podAlertPulse {
-      0%,100% { opacity:1; filter: brightness(1) drop-shadow(0 0 8px var(--pod-color)) drop-shadow(0 0 20px var(--pod-color)); }
-      50%     { opacity:0.4; filter: brightness(1.8) drop-shadow(0 0 2px var(--pod-color)); }
+      0%,100% { text-shadow: 0 0 8px rgba(255,60,60,0.9), 0 0 24px rgba(255,60,60,0.6), 0 0 48px rgba(255,60,60,0.3); color: #ff6666; }
+      50%     { text-shadow: 0 0 4px rgba(255,60,60,0.4), 0 0 12px rgba(255,60,60,0.2); color: #ff9999; }
     }
-    .pod-label-text.alerting { animation: podAlertPulse 1.6s ease-in-out infinite; }
+    .pod-label-text.alerting { animation: podAlertPulse 2.2s ease-in-out infinite; }
 
     .pod-queues {
       display: grid; grid-template-columns: repeat(3, 1fr);
@@ -159,10 +159,10 @@
       text-align: center;
     }
     @keyframes panelAlertPulse {
-      0%,100% { opacity:1; text-shadow: 0 0 8px var(--panel-color), 0 0 20px var(--panel-color); filter: brightness(1.5); }
-      50%     { opacity:0.4; text-shadow: 0 0 2px var(--panel-color); filter: brightness(1); }
+      0%,100% { text-shadow: 0 0 8px rgba(255,60,60,0.9), 0 0 24px rgba(255,60,60,0.5), 0 0 48px rgba(255,60,60,0.25); color: #ff6666; }
+      50%     { text-shadow: 0 0 4px rgba(255,60,60,0.4), 0 0 14px rgba(255,60,60,0.2); color: #ffaaaa; }
     }
-    .voice-panel-title.alerting { animation: panelAlertPulse 1.6s ease-in-out infinite; }
+    .voice-panel-title.alerting { animation: panelAlertPulse 2.2s ease-in-out infinite; }
     .voice-panel > .card { border-radius: 0; flex: 1; }
 
     /* ── CARD ── */
@@ -171,26 +171,26 @@
       background: rgba(8,16,40,0.7); backdrop-filter: blur(20px);
       transition: background 0.3s;
     }
-    /* Card alert states — inset glow only, stays inside overflow:hidden */
-    @keyframes critglow    { 0%,100%{opacity:1} 50%{opacity:0.35} }
-    @keyframes critInsetGlow {
-      0%,100% { box-shadow: inset 0 0 0 1px rgba(255,50,50,0.55),
-                             inset 0 0 28px rgba(255,50,50,0.18),
-                             inset 0 0 60px rgba(255,50,50,0.07); }
-      50%     { box-shadow: inset 0 0 0 1px rgba(255,50,50,0.15),
-                             inset 0 0 14px rgba(255,50,50,0.06),
-                             inset 0 0 30px rgba(255,50,50,0.03); }
+    /* Card alert states — soft diffuse backlit glow, no hard border lines */
+    @keyframes critglow { 0%,100%{opacity:1} 50%{opacity:0.35} }
+    @keyframes critBacklit {
+      0%,100% { box-shadow: inset 0 0 40px rgba(255,40,40,0.44),
+                             inset 0 0 80px rgba(255,40,40,0.22),
+                             inset 0 0 120px rgba(255,40,40,0.10); }
+      50%     { box-shadow: inset 0 0 20px rgba(255,40,40,0.12),
+                             inset 0 0 50px rgba(255,40,40,0.05),
+                             inset 0 0 80px rgba(255,40,40,0.02); }
     }
-    @keyframes warnInsetGlow {
-      0%,100% { box-shadow: inset 0 0 0 1px rgba(255,171,0,0.45),
-                             inset 0 0 22px rgba(255,171,0,0.12); }
-      50%     { box-shadow: inset 0 0 0 1px rgba(255,171,0,0.15),
-                             inset 0 0 10px rgba(255,171,0,0.04); }
+    @keyframes warnBacklit {
+      0%,100% { box-shadow: inset 0 0 35px rgba(255,171,0,0.38),
+                             inset 0 0 70px rgba(255,171,0,0.18); }
+      50%     { box-shadow: inset 0 0 15px rgba(255,171,0,0.10),
+                             inset 0 0 40px rgba(255,171,0,0.05); }
     }
-    .card.ok        { box-shadow: inset 0 0 0 1px rgba(26,111,255,0.15); }
-    .card.warn      { animation: warnInsetGlow 3.5s ease-in-out infinite; }
-    .card.crit      { animation: critInsetGlow 3.5s ease-in-out infinite; }
-    .card.no-agents { animation: critInsetGlow 3.5s ease-in-out infinite; }
+    .card.ok        { }
+    .card.warn      { animation: warnBacklit 3.5s ease-in-out infinite; }
+    .card.crit      { animation: critBacklit 3.5s ease-in-out infinite; }
+    .card.no-agents { animation: critBacklit 3.5s ease-in-out infinite; }
 
     /* ── CARD HEAD ── */
     .card-head { display: flex; align-items: center; justify-content: space-between; padding: clamp(0.3rem,0.7vw,0.65rem) clamp(0.4rem,1vw,0.9rem) clamp(0.2rem,0.45vw,0.45rem); gap: 0.3rem; flex-wrap: wrap; }
@@ -198,7 +198,7 @@
     .badge { font-family: var(--font-h); font-size: clamp(0.42rem,0.65vw,0.58rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.16rem 0.5rem; border-radius: 20px; border: 1px solid; white-space: nowrap; flex-shrink: 0; transition: all 0.4s; }
     .badge.warn      { color: var(--amber); border-color: rgba(255,171,0,0.55);  background: rgba(255,171,0,0.10); }
     .badge.crit      { color: #ff5555;      border-color: rgba(255,85,85,0.5);   background: rgba(255,85,85,0.08); }
-    .badge.no-agents { color: #ff4444;      border-color: rgba(255,68,68,0.6);   background: rgba(255,68,68,0.1); animation: critglow 3.5s ease-in-out infinite; }
+    .badge.no-agents { color: #ff4444;      border-color: rgba(255,68,68,0.6);   background: rgba(255,68,68,0.1); }
 
     /* ── STATS ── */
     .stats { display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: end; }
