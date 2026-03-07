@@ -914,21 +914,8 @@ async function getAggregates(queueIds, mediaType) {
     body: JSON.stringify({
       interval,
       filter: {
-        type: 'and',
-        clauses: [
-          {
-            type: 'or',
-            predicates: queueIds.map(id => ({ type: 'dimension', dimension: 'queueId', value: id }))
-          },
-          {
-            // Genesys uses 'chat' for web chat and 'message' for messaging channels
-            type: 'or',
-            predicates: (mediaType === 'message'
-              ? ['chat','message']
-              : [mediaType]
-            ).map(mt => ({ type: 'dimension', dimension: 'mediaType', value: mt }))
-          }
-        ]
+        type: 'or',
+        predicates: queueIds.map(id => ({ type: 'dimension', dimension: 'queueId', value: id }))
       },
       groupBy: ['queueId'],
       metrics: ['nOffered', 'tAnswered', 'tAbandon', 'oServiceLevel', 'tWait'],
