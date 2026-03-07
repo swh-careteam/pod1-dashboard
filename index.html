@@ -862,7 +862,11 @@ function toast(msg,err=false){
 // Map each channel to its queue IDs (from PODs only; right-panel voice queues excluded from channel summary)
 const SUMMARY_CHANNELS = {
   voice: {
-    queueIds: CONFIG.PODS.flatMap(p => p.queues.filter(q => q.label === 'Voice Queue').map(q => q.id)),
+    // POD voice queues + all 4 specialty voice panels
+    queueIds: [
+      ...CONFIG.PODS.flatMap(p => p.queues.filter(q => q.label === 'Voice Queue').map(q => q.id)),
+      ...CONFIG.VOICE_PANELS.map(vp => vp.queueId),
+    ],
     mediaType: 'voice',
     slTarget: 80,   // % target
     slThreshold: 20, // answer within 20s
