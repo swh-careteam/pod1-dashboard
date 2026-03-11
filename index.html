@@ -688,12 +688,40 @@ async function getObservations() {
   return map;
 }
 
-// ── AGENTS ──
-async function getAgents(queueId) {
+// ── AGENTS (bulk — 1 POST for all queues instead of 1 GET per queue) ──
+async function getAgentsBulk() {
+  const queueIds = allQueues().map(q => q.id);
+  // Initialise every queue to null so missing data renders correctly
+  const agentMap = {};
+  queueIds.forEach(id => { agentMap[id] = null; });
   try {
-    const d=await api(`/api/v2/routing/queues/${queueId}/members?pageSize=100&expand=routingStatus,presence`);
-    return (d.entities||[]).filter(u=>u.user?.presence?.presenceDefinition?.systemPresence==='On Queue').length;
-  } catch { return null; }
+    // Single POST: search for users whose routing status places them in any
+    // of our monitored queues.  expand=routingStatus,presence gives us the
+    // same fields the old per-queue GET returned.
+    const d = await api('/api/v2/users/search', {
+      method: 'POST',
+      body: JSON.stringify({
+        query: [
+          {
+            type: 'EXACT',
+            fields: ['routingStatus.status'],
+            values: ['INTERACTING', 'IDLE'],   // both statuses = On Queue
+          },
+        ],
+        expand: ['routingStatus', 'presence'],
+        pageSize: 500,
+      }),
+    });
+    // Reset counts to 0 for queues that returned results
+    queueIds.forEach(id => { agentMap[id] = 0; });
+    for (const user of (d.results || [])) {
+      const sp = user.presence?.presenceDefinition?.systemPresence;
+      if (sp !== 'On Queue') continue;          // keep same filter as before
+      const qid = user.routingStatus?.queueId;
+      if (qid && agentMap[qid] !== undefined) agentMap[qid]++;
+    }
+  } catch { /* leave nulls — UI already handles null as unknown */ }
+  return agentMap;
 }
 
 // ── HELPERS ──
@@ -1089,8 +1117,7 @@ function updateSummaryBand(channel, obs, agentMap, aggData) {
 async function poll() {
   try {
     const obs=await getObservations();
-    const agentMap={};
-    await Promise.all(allQueues().map(async q=>{ agentMap[q.id]=await getAgents(q.id); }));
+    const agentMap=await getAgentsBulk(); // bulk: 1 POST replaces 16 per-queue GETs
     render(obs,agentMap);
     if(Object.keys(perQueueAgg).length) applyPerQueueAgg(); // re-apply cached agg after re-render
     checkAlerts(obs,agentMap);
