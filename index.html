@@ -172,7 +172,7 @@
       overflow: hidden; position: relative;
       background: rgba(8,16,40,0.7); backdrop-filter: blur(20px);
       transition: background 0.3s;
-      display: flex; flex-direction: column; justify-content: center;
+      display: flex; flex-direction: column; justify-content: flex-start;
     }
     /* Card alert states — soft diffuse backlit glow, no hard border lines */
     @keyframes critglow { 0%,100%{opacity:1} 50%{opacity:0.35} }
@@ -204,8 +204,8 @@
     .badge.no-agents { color: #ff4444;      border-color: rgba(255,68,68,0.6);   background: rgba(255,68,68,0.1); }
 
     /* ── STATS ── */
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); align-items: center; }
-    .stat  { padding: clamp(0.2rem,0.5vw,0.5rem) clamp(0.15rem,0.3vw,0.3rem); display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: center; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); align-items: start; }
+    .stat  { padding: clamp(0.2rem,0.5vw,0.5rem) clamp(0.15rem,0.3vw,0.3rem); display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: flex-start; }
     .stat.stat-today { border-left: 1px solid rgba(255,255,255,0.1); opacity: 0.85; }
     .stat.stat-today .stat-label { color: #8fa8c8; }
     .stat-label { font-family: var(--font-h); font-size: clamp(0.48rem,0.7vw,0.62rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #c8dff5; margin-bottom: 0.18rem; height: auto; display:block; text-align:center; line-height:1.25; }
