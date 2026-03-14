@@ -96,7 +96,7 @@
     /* ── MAIN GRID: voice panels left, pods right ── */
     .main-grid {
       display: grid;
-      grid-template-columns: 456px 1fr;
+      grid-template-columns: 410px 1fr;
       gap: clamp(0.6rem,1.2vw,1.2rem);
       align-items: stretch;
     }
@@ -166,9 +166,6 @@
     }
     .voice-panel-title.alerting { animation: panelAlertPulse 2.2s ease-in-out infinite; }
     .voice-panel > .card { border-radius: 0; flex: 1; }
-    .voice-panel > .card .stat-val { font-size: clamp(1.4rem,1.8vw,1.9rem); }
-    .voice-panel > .card .stat-label { font-size: clamp(0.44rem,0.6vw,0.55rem); }
-    .voice-panel > .card .stat-unit  { font-size: clamp(0.44rem,0.6vw,0.55rem); }
 
     /* ── CARD ── */
     .card {
