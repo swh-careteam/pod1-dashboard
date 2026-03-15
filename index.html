@@ -204,13 +204,27 @@
     .badge.no-agents { color: #ff4444;      border-color: rgba(255,68,68,0.6);   background: rgba(255,68,68,0.1); }
 
     /* ── STATS ── */
-    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(0, 1fr)); align-items: end; flex: 1; padding-bottom: clamp(0.3rem,0.6vw,0.5rem); }
-    .stat  { padding: clamp(0.2rem,0.5vw,0.5rem) clamp(0.15rem,0.3vw,0.3rem); display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+      grid-template-rows: auto auto auto;
+      align-items: end;
+      flex: 1;
+      padding-bottom: clamp(0.3rem,0.6vw,0.5rem);
+    }
+    .stat {
+      padding: clamp(0.1rem,0.3vw,0.3rem) clamp(0.15rem,0.3vw,0.3rem) 0;
+      display: grid;
+      grid-template-rows: subgrid;
+      grid-row: span 3;
+      align-items: center;
+      text-align: center;
+    }
     .stat.stat-today { border-left: 1px solid rgba(255,255,255,0.1); opacity: 0.85; }
     .stat.stat-today .stat-label { color: #8fa8c8; }
-    .stat-label { font-family: var(--font-h); font-size: clamp(0.48rem,0.7vw,0.62rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #c8dff5; margin-bottom: 0.18rem; height: 2.6em; display: flex; align-items: flex-end; justify-content: center; text-align: center; line-height: 1.25; }
-    .stat-val   { font-family: var(--font-h); font-size: clamp(1.6rem,2.2vw,2.2rem); font-weight: 700; line-height: 1; letter-spacing: -0.01em; transition: color 0.5s; }
-    .stat-unit  { font-size: clamp(0.48rem,0.65vw,0.58rem); color: #c8dff5; margin-top: 0.18rem; letter-spacing: 0.06em; }
+    .stat-label { font-family: var(--font-h); font-size: clamp(0.48rem,0.7vw,0.62rem); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #c8dff5; display: flex; align-items: flex-end; justify-content: center; text-align: center; line-height: 1.25; padding-bottom: 0.18rem; }
+    .stat-val   { font-family: var(--font-h); font-size: clamp(1.6rem,2.2vw,2.2rem); font-weight: 700; line-height: 1; letter-spacing: -0.01em; transition: color 0.5s; display: flex; align-items: center; justify-content: center; }
+    .stat-unit  { font-size: clamp(0.48rem,0.65vw,0.58rem); color: #c8dff5; letter-spacing: 0.06em; display: flex; align-items: flex-start; justify-content: center; padding-top: 0.18rem; }
     @keyframes numflash { 0%{opacity:0.3;transform:scale(0.94)} 100%{opacity:1;transform:scale(1)} }
     .stat-val.flash { animation: numflash 0.35s cubic-bezier(0.16,1,0.3,1); }
     @keyframes agentpulse { 0%,100%{opacity:1;text-shadow:0 0 0px rgba(255,68,68,0)} 50%{opacity:0.5;text-shadow:0 0 22px rgba(255,68,68,0.9)} }
